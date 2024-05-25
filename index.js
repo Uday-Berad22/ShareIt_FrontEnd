@@ -21,7 +21,8 @@ const emailURL = `${baseURL}/api/files/send`;
 
 const maxAllowedSize = 100 * 1024 * 1024 * 1024; //1000mb
 
-browseBtn.addEventListener("click", () => {
+browseBtn.addEventListener("click", (e) => {
+  e.preventDefault();
   fileInput.click();
 });
 
@@ -50,13 +51,15 @@ dropZone.addEventListener("dragover", (e) => {
 });
 
 dropZone.addEventListener("dragleave", (e) => {
+  e.preventDefault();
   dropZone.classList.remove("dragged");
 
   console.log("drag ended");
 });
 
 // file input change and uploader
-fileInput.addEventListener("change", () => {
+fileInput.addEventListener("change", (e) => {
+  e.preventDefault();
   if (fileInput.files[0].size > maxAllowedSize) {
     showToast("Max file size is 1GB");
     fileInput.value = ""; // reset the input
@@ -66,17 +69,20 @@ fileInput.addEventListener("change", () => {
 });
 
 // sharing container listenrs
-copyURLBtn.addEventListener("click", () => {
+copyURLBtn.addEventListener("click", (e) => {
+  e.preventDefault();
   fileURL.select();
   document.execCommand("copy");
   showToast("Copied to clipboard");
 });
 
-fileURL.addEventListener("click", () => {
+fileURL.addEventListener("click", (e) => {
+  e.preventDefault();
   fileURL.select();
 });
 
-const uploadFile = () => {
+const uploadFile = (e) => {
+  e.preventDefault();
   console.log("file added uploading");
 
   files = fileInput.files;
@@ -92,6 +98,7 @@ const uploadFile = () => {
   // listen for upload progress
   xhr.upload.onprogress = function (event) {
     // find the percentage of uploaded
+    event.preventDefault();
     let percent = Math.round((100 * event.loaded) / event.total);
     progressPercent.innerText = percent;
     const scaleX = `scaleX(${percent / 100})`;
@@ -100,13 +107,15 @@ const uploadFile = () => {
   };
 
   // handle error
-  xhr.upload.onerror = function () {
+  xhr.upload.onerror = function (e) {
+    e.preventDefault();
     showToast(`Error in upload: ${xhr.status}.`);
     fileInput.value = ""; // reset the input
   };
 
   // listen for response which will give the link
-  xhr.onreadystatechange = function () {
+  xhr.onreadystatechange = function (e) {
+    e.preventDefault();
     if (xhr.readyState == XMLHttpRequest.DONE) {
       onFileUploadSuccess(xhr.responseText);
     }
